@@ -39,9 +39,7 @@ static constexpr int MESSAGE_THROTTLE = 100;
 
 using namespace msr::airlib;
 
-msr::airlib::MultirotorRpcLibClient client;
-
-void cbLocalPose(ConstPosesStampedPtr& msg)
+void cbLocalPose(ConstPosesStampedPtr& msg, msr::airlib::MultirotorRpcLibClient &client)
 {
     std::cout << std::fixed;
     std::cout << std::setprecision(3);
@@ -110,11 +108,13 @@ void cbGlobalPose(ConstPosesStampedPtr& msg)
 
 int main(int _argc, char** _argv)
 {
-
+    // Define ip address and init client
+    const std::string ip = (_argc > 1) ? _argv[1] : "localhost";
+    msr::airlib::MultirotorRpcLibClient client(ip);
     client.confirmConnection();
 
     // Load gazebo
-    gazebo::client::setup(_argc, _argv);
+    gazebo::client::setup(1, &_argv[0]);
 
     // Create our node for communication
     gazebo::transport::NodePtr node(new gazebo::transport::Node());
